@@ -1,0 +1,25 @@
+# Another custom function we created:
+
+  query = f"""
+    SELECT
+      listing_name,
+      location_details,
+      location,
+      details,
+      description_by_sections,
+      reviews,
+      amenities
+    FROM dais_hackathon_shared_data.bright_initiative.airbnb_properties_information
+    WHERE
+      location ILIKE '%{location}%'
+      and price <= {price}
+      AND ratings >= {ratings}
+      AND guests >= {guests}
+      AND host_number_of_reviews > 1000
+      AND EXISTS(reviews, review -> review ILIKE '%wheelchair%')
+    LIMIT 5
+  """
+  import pandas as pd
+  from pyspark.sql import SparkSession
+  spark = SparkSession.builder.getOrCreate()
+  return spark.sql(query).toPandas()
