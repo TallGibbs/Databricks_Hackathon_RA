@@ -1,0 +1,26 @@
+# Custom function we made and published to our Unity Catalog:
+SELECT
+  listing_name,
+  location_details,
+  location,
+  details,
+  description_by_sections,
+  reviews,
+  amenities
+FROM dais_hackathon_shared_data.bright_initiative.airbnb_properties_information
+WHERE
+  location ILIKE CONCAT('%', location, '%')
+  AND price <= price
+  AND ratings >= ratings
+  AND guests >= guests
+  AND host_number_of_reviews > 1000
+  AND EXISTS (
+    SELECT 1
+    FROM (
+      SELECT exploded_review
+      FROM dais_hackathon_shared_data.bright_initiative.airbnb_properties_information
+      LATERAL VIEW EXPLODE(reviews) t AS exploded_review
+    ) exploded
+    WHERE exploded.exploded_review ILIKE '%wheelchair%'
+  )
+LIMIT 5
